@@ -219,7 +219,7 @@ Panel {
           Stat { visible: root.info && root.info.runtime !== null; label: "RUNTIME"
                  value: root.info ? Model.formatRuntime(root.info.runtime) : "" }
           Stat { label: "LOAD"; value: root.info ? Model.formatNum(root.info.load, "%")
-                                                  + (root.info.watts !== null ? " · " + root.info.watts + " W" : "") : "" }
+                                                  + (root.info.watts !== null ? " · ≈ " + root.info.watts + " W" : "") : "" }
 
           PanelSeparator { foreground: root.bar.foreground }
 

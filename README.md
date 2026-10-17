@@ -78,7 +78,7 @@ The widget asks `localhost` for its UPS list and uses the one named like `forza`
 - The bar icon refreshes every 30 s while the popup is closed, every 5 s while it is open.
 - This unit's driver reports no `battery.runtime` (NUT: "runtimecal not set"), so the runtime row is hidden. Setting `runtimecal` in `ups.conf` makes NUT estimate it.
 - Which values appear depends on what the NUT driver reports for the unit. Missing ones show as "—" or are hidden.
-- This unit's driver reports no real power rating, so watts are hidden until you set one. Add `"watts"` (the W figure on the UPS label, not the 2200 VA one) to the widget's entry in `shell.json`, e.g. `{ "id": "puck.forza-fx-2200lcd", "watts": 1200 }`. The result is an estimate, since `ups.load` is a percentage that may be based on VA rather than watts.
+- This unit's driver reports no real power rating, so watts are hidden until you set one. Add `"watts"` (the W figure on the UPS label, not the 2200 VA one) to the widget's entry in `shell.json`, e.g. `{ "id": "puck.forza-fx-2200lcd", "watts": 1200 }`. The result is an estimate of what the connected devices draw (output only), so it reads lower than a wall meter, which also counts the UPS's own consumption. It is also approximate because `ups.load` is a percentage that may be based on VA rather than watts.
 - Watts are `ups.load` × `ups.realpower.nominal`, or `ups.realpower` if the driver provides it.
 
 ## Tests
