@@ -74,10 +74,12 @@ function parseStatus(text) {
 }
 
 // Turns raw upsc variables into the numbers the popup shows (null = not reported).
-function summarize(vars) {
+// ratedWatts is the UPS's real power rating from its label, used when the driver reports none.
+function summarize(vars, ratedWatts) {
   var st = parseStatus(vars["ups.status"])
   var load = num(vars, "ups.load")
   var nominal = num(vars, "ups.realpower.nominal")
+  if (nominal === null && ratedWatts > 0) nominal = Number(ratedWatts)
   var watts = num(vars, "ups.realpower")
   if (watts === null && load !== null && nominal !== null) watts = Math.round(load * nominal / 100)
   return {

@@ -51,7 +51,7 @@ Panel {
   function applyRead(text) {
     var vars = Model.parseUpsc(text)
     if (vars["ups.status"] === undefined) { status = "silent"; return }
-    info = Model.summarize(vars)
+    info = Model.summarize(vars, Number(setting("watts", 0)))
     status = "ready"
   }
 
