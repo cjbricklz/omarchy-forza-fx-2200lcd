@@ -102,7 +102,8 @@ Panel {
     anchors.fill: parent
     bar: root.bar
     text: !root.ready ? Model.ICON.unknown
-          : Model.iconFor(root.info) + (root.info.charge !== null ? " " + Math.round(root.info.charge) + "%" : "")
+          : (root.info.charge !== null ? Math.round(root.info.charge) + "% " : "") + Model.iconFor(root.info)
+    slotSize: Style.bar.iconSlot * (root.ready && root.info.charge !== null && !vertical ? 2 : 1)
     onPressed: function(b) { root.toggle() }
   }
 

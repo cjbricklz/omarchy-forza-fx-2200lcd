@@ -7,12 +7,14 @@ function glyph(cp) {
   return String.fromCharCode(0xD800 + (n >> 10), 0xDC00 + (n & 0x3FF))
 }
 
+// Same glyph sets as Omarchy's own battery widget, so the two look alike.
+var LEVELS = [0xF007A, 0xF007B, 0xF007C, 0xF007D, 0xF007E, 0xF007F, 0xF0080, 0xF0081, 0xF0082, 0xF0079].map(glyph)
+var CHARGING = [0xF089C, 0xF0086, 0xF0087, 0xF0088, 0xF089D, 0xF0089, 0xF089E, 0xF008A, 0xF008B, 0xF0085].map(glyph)
 var ICON = {
   full: glyph(0xF0079),
-  charging: glyph(0xF0084),
+  charging: glyph(0xF0085),
   alert: glyph(0xF0083),
-  unknown: glyph(0xF0091),
-  level10: 0xF007A        // battery-10 .. battery-90 follow in steps of one
+  unknown: glyph(0xF0091)
 }
 
 function clamp(v, lo, hi) {
@@ -56,17 +58,17 @@ function parseStatus(text) {
   var onBattery = has("OB") || has("DISCHRG")
   var lowBattery = has("LB")
   var level = "ok"
-  var label = "ON MAINS"
+  var label = "LINE MODE"
   if (flags.length === 0) { level = "unknown"; label = "NO STATUS" }
   else if (has("FSD")) { level = "critical"; label = "SHUTTING DOWN" }
   else if (onBattery && lowBattery) { level = "critical"; label = "BATTERY LOW" }
-  else if (onBattery) { level = "warn"; label = "ON BATTERY" }
+  else if (onBattery) { level = "warn"; label = "BATTERY MODE" }
   else if (has("OVER")) { level = "warn"; label = "OVERLOADED" }
   else if (has("RB")) { level = "warn"; label = "REPLACE BATTERY" }
-  else if (has("CHRG")) label = "CHARGING"
-  else if (has("BOOST")) label = "ON MAINS · BOOST"
-  else if (has("TRIM")) label = "ON MAINS · TRIM"
-  else if (has("BYPASS")) { level = "warn"; label = "BYPASS" }
+  else if (has("CHRG")) label = "LINE MODE · CHARGING"
+  else if (has("BOOST")) label = "LINE MODE · BOOST"
+  else if (has("TRIM")) label = "LINE MODE · TRIM"
+  else if (has("BYPASS")) { level = "warn"; label = "BYPASS MODE" }
   else if (has("OFF")) { level = "warn"; label = "OFF" }
   return { flags: flags, onBattery: onBattery, lowBattery: lowBattery, level: level, label: label }
 }
@@ -107,14 +109,14 @@ function formatNum(v, unit, digits) {
   return (digits ? v.toFixed(digits) : String(Math.round(v))) + (unit ? " " + unit : "")
 }
 
-// Bar icon for the charge and status.
+// Bar icon for the charge and status, one glyph per 10% step.
 function iconFor(s) {
   if (!s || s.charge === null) return ICON.unknown
   if (s.status.level === "critical") return ICON.alert
-  if (!s.status.onBattery) return s.status.flags.indexOf("CHRG") >= 0 ? ICON.charging : ICON.full
-  var step = Math.min(8, Math.max(0, Math.floor(s.charge / 10) - 1))   // 10% -> battery-10
-  return s.charge >= 95 ? ICON.full : glyph(ICON.level10 + step)
+  var step = clamp(Math.floor(s.charge / 10), 0, 9)
+  if (s.status.onBattery) return LEVELS[step]
+  return s.status.flags.indexOf("CHRG") >= 0 ? CHARGING[step] : (s.charge >= 95 ? ICON.charging : LEVELS[step])
 }
 
-if (typeof module !== "undefined") module.exports = { glyph, ICON, clamp, parseUpsc, pickUps, parseStatus,
+if (typeof module !== "undefined") module.exports = { glyph, ICON, LEVELS, CHARGING, clamp, parseUpsc, pickUps, parseStatus,
                                                       summarize, formatRuntime, formatNum, iconFor }
