@@ -1,5 +1,7 @@
 # Forza FX-2200LCD UPS for Omarchy
 
+![The plugin's popup open on the Omarchy bar](preview.png)
+
 An Omarchy bar widget that shows the state of a Forza FX-2200LCD (2200 VA) UPS. The bar icon shows the battery level and charge. Click it to open a popup.
 
 - **Status**: on mains, charging, on battery, battery low, overloaded, replace battery.
